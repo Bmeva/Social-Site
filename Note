@@ -1,0 +1,4 @@
+SETTING UP GIT IGNORE FILES
+go to gitignore.oo inside the searcbar type django
+it would create files and folders for git to ignore while pushing to git repo
+copy the generated codes and create a file in the root drectory and call it.gitignore

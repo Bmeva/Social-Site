@@ -1,4 +1,55 @@
+username eva
+email evansboma@gmail.com
+Password Nedva@54
+
 SETTING UP GIT IGNORE FILES
 go to gitignore.oo inside the searcbar type django
 it would create files and folders for git to ignore while pushing to git repo
 copy the generated codes and create a file in the root drectory and call it.gitignore
+
+if you type git log --format='%aN <%aE>' | sort -u you would see the git account in your project
+
+Set Your Name and Email Globally:
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+
+Set Your Name and Email Locally:
+git config user.name "Your Name"
+git config user.email "your.email@example.com"
+
+to automatically add static to all your section install auto django by code with tommy
+press ctr shift and p then search for auto django and click it
+check the head and footer bcos sometimes it adds static to the head and footer links
+
+
+After creating the user model add AUTH_USER_MODEL = 'Authentication.User' to overide the default user
+ model
+
+ if you receive this error while migrating do this
+ raise InconsistentMigrationHistory(
+django.db.migrations.exceptions.InconsistentMigrationHistory: Migration admin.0001_initial is applied
+ before its 
+dependency Authentication.0001_initial on database 'default'.
+
+go to your insatlled app section and comment out  #'django.contrib.admin',
+then go to your project main url and comment out   #path('admin/', admin.site.urls),
+
+then run migrate command again and then uncomment. 
+
+in django you can either use slug or id to identify an object in the url
+
+Django signal to automatically create a profile when a user is created
+
+after creating the User and Profile models import from django.db.models.signals import post_save
+
+then type this code 
+  def create_user_profile(sender, instance, created, **kwargs):
+        if created:
+            Profile.objects.create(user=instance)
+
+    def save_user_profile(sender, instance, **kwargs):
+        instance.profile.save()
+
+
+    post_save.connect(create_user_profile, sender=User)
+    post_save.connect(save_user_profile, sender=User)

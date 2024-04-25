@@ -6,7 +6,8 @@ from django.http import JsonResponse
 from django.utils.timesince import timesince
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-from .models import Comment
+from .models import Comment, ReplyComment
+from Core.models import User, Friend, FriendRequest
 # Create your views here.
 def index(request):
     if not request.user.is_authenticated:
@@ -19,6 +20,18 @@ def index(request):
         'posts': posts,
     }
     return render(request, 'Core/index.html', context)
+
+
+@login_required(login_url='Register')
+def post_details(request, slug): #we want to get the details of a single ppost
+    post = Post.objects.get(slug=slug, active=True, visibility='Everyone')
+
+    context = {
+        'p': post,
+    }
+    return render(request, 'Core/post_details.html', context)
+
+
 
 @csrf_exempt
 def create_post(request):
@@ -44,9 +57,10 @@ def create_post(request):
                 'post': { 
                 'title': post.title,
                 'image': post.image.url,
-                'full_name': post.user.profile.image.url,
+                "full_name":post.user.profile.full_name,
                 'date': timesince(post.date),
                 'id': post.id,
+                "profile_image":post.user.profile.image.url,
 
             }})
         
@@ -107,4 +121,95 @@ def comment_on_post(request):
     return JsonResponse({'data': data})
 
 
-   
+
+def like_comment(request):
+    id = request.GET['id']
+    comment = Comment.objects.get(id=id)
+    user = request.user
+    bool = False 
+
+    if user in comment.likes.all():
+        comment.likes.remove(user)
+        bool = False
+    else:
+        comment.likes.add(user)
+        bool = True 
+
+       
+    data = {
+        "bool":bool,
+        'likes':comment.likes.all().count()
+    }
+    return JsonResponse({"data":data})
+
+
+
+#REPLY COMMENT
+def reply_comment(request):
+
+    id = request.GET['id']
+    reply = request.GET['reply']
+
+    comment = Comment.objects.get(id=id)
+    user = request.user
+
+    new_reply = ReplyComment.objects.create(
+        comment=comment,
+        reply=reply,
+        user=user
+    )
+
+    
+    data = {
+        "bool":True,
+        'reply':new_reply.reply,
+        "profile_image":new_reply.user.profile.image.url,
+        "date":timesince(new_reply.date),
+        "reply_id":new_reply.id,
+        "post_id":new_reply.comment.post.id,
+        
+    }
+    return JsonResponse({"data":data})
+
+
+def deleteComment(request):
+    id = request.GET['id']
+    comment = Comment.objects.get(id=id)
+    comment.delete()
+    data = {
+        'bool': True
+    }
+    return JsonResponse({'data': data})
+
+
+
+def deleteCommentReply(request):
+    id = request.GET['id']
+    comment = ReplyComment.objects.get(id=id)
+    comment.delete()
+    data = {
+        'bool': True
+    }
+    return JsonResponse({'data': data})
+
+
+def addFriend(request):
+    sender = request.user
+    receiver_id = request.GET['id']
+    bool = False
+
+    if sender.id == int(receiver_id):
+        return JsonResponse({'Error': 'You cabt send friend request to yourself'})
+    receiver = User.objects.get(id = receiver_id)
+
+    try:
+        friend_request = FriendRequest.objects.get(sender=sender, receiver = receiver)
+        if friend_request:
+            friend_request.delete()
+        bool = False
+        return JsonResponse({'Error': 'Friend request has been cancealed', 'bool': bool})
+    except FriendRequest.DoesNotExist:
+        friend_request = FriendRequest(sender=sender, receiver=receiver)
+        friend_request.save()
+        bool = True
+        return JsonResponse({'Success': 'Sent', 'bool': bool})

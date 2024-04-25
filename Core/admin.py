@@ -51,7 +51,7 @@ class CommentAdmin(admin.ModelAdmin):
 
 
 class ReplyAdmin(admin.ModelAdmin):
-    list_display = ['user', 'comment', 'active']
+    list_display = ['user', 'comment', 'active', 'reply']
 
 
 class CommentAdmin(admin.ModelAdmin):

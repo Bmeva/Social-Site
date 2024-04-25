@@ -100,18 +100,18 @@
 
  <!---------------------------THIS IS WHRERE POST DISPLAYS------------------------------------------------------------------->
                         <!-- Post section-->
-                        {% for p in posts %}
+                     
 
                         <div class="card lg:mx-0 uk-animation-slide-bottom-small mt-3 mb-3">
                             
                             <!-- post header-->
                             <div class="flex justify-between items-center lg:p-4 p-2.5">
                                 <div class="flex flex-1 items-center space-x-4">
-                                    <a href="{% url 'MyFriendprofile' p.user.username %}">
+                                    <a href="#">
                                         <img src="{{p.user.profile.image.url}}" class="bg-gray-200 border border-white rounded-full w-10 h-10">
                                     </a>
                                     <div class="flex-1 font-semibold capitalize">
-                                        <a href="{% url 'MyFriendprofile' p.user.username %}" class="text-black dark:text-gray-100"> {{p.user}} - {{ p.user.profile.full_name|title }}</a>
+                                        <a href="#" class="text-black dark:text-gray-100"> {{p.user}} - {{ p.user.profile.full_name|title }}</a>
                                         <div class="text-gray-700 flex items-center space-x-2 thedate{{p.id}}"> {{ p.date | timesince }} ago<span></span>
                                             <i class="fas fa-clock"></i>
                                             <!--<ion-icon name="people"></ion-icon>-->
@@ -162,8 +162,8 @@
                             </div>
                             {% endif %}
                             {% if p.image %}
-                            <div>
-                                <a href="{% url 'post_details' p.slug %}">
+                            <div uk-lightbox>
+                                <a href="assets/images/avatars/avatar-lg-3.jpg">  
                                     <img src="{{p.image.url}}" alt="" class="max-h-96 w-full object-cover">
                                 </a>
                             </div>
@@ -239,7 +239,7 @@
 
         <!------------------------------------DISPLAY POST SECTION------------->
                                 <div class="border-t py-4 space-y-4 dark:border-gray-600" id="comment-div-main{{p.id}}">
-                                    {% for c in p.post_comments|slice:":2" %} <!--post comment is in the post model-->
+                                    {% for c in p.post_comments %} <!--post comment is in the post model-->
                                    
                                     <div class="flex cad shadow p-2" id="comment-div{{c.id}}">
                                         <div class="w-10 h-10 rounded-full relative flex-shrink-0">
@@ -285,8 +285,8 @@
                                             </div>
                                             <!--DISPLAY COMMENT REPLY-->
                                           
-                                                <div class="reply-div{{c.id}}">
-                                                {% for r in c.comment_replies|slice:1 %}
+                                                <div class="reply-div{{c.id}}" style="overflow-y: auto; max-height: 200px;">  <!-- this makes it have a scroll bar style="overflow-y: auto; max-height: 200px;"-->
+                                                {% for r in c.comment_replies %}
                                                 <div class="flex mr-12 mb-2 mt-2" style="margin-right: 20px;" id="comment-delete-div{{r.id}}">
                                                         <div class="w-10 h-10 rounded-full relative flex-shrink-0">
                                                             <img src="{{r.user.profile.image.url}}" style="width: 40px; height: 40px;" alt="" class="absolute h-full rounded-full w-full">
@@ -334,17 +334,7 @@
                                     {% endfor %}
                                 </div>
 
-                                {% if p.post_comments.count > 0 %}
-                                    {% with remaining_comments_count=p.post_comments.count|add:"-2" %}
-                                            {% if remaining_comments_count > 0 %}
-
-                                <a href="{% url 'post_details' p.slug %}" class="hover:text-blue-600 hover:underline">  Veiw {{ remaining_comments_count }} more Comments </a>
-                                            {% endif %}
-                                    {% endwith %}
-                                {% else %}
-                                <a href="#" class="hover:text-blue-600 hover:underline">  No Comments </a>
-                               
-                                {% endif %}
+                           
 <!----------------------------------------------------------------------ADDING COMMENT SECTION-->
 <!----------------------------------------------------------------------ADDING COMMENT SECTION-->
                                 <div class="bg-gray-100 rounded-full relative dark:bg-gray-800 border-t">
@@ -362,11 +352,11 @@
                         </div>
                         <!--Post end here-->
      <!---------------------------------------------------------------------------------------------->                   
-                {% endfor %}
+        
 
                         <div class="flex justify-center mt-6">
-                            <a href="#" class="bg-white dark:bg-gray-900 font-semibold my-3 px-6 py-2 rounded-full shadow-md dark:bg-gray-800 dark:text-white">
-                                Load more ..</a>
+                            <a href="{% url 'index' %}" class="bg-white dark:bg-gray-900 font-semibold my-3 px-6 py-2 rounded-full shadow-md dark:bg-gray-800 dark:text-white">
+                                Back to Feed..</a>
                         </div>
 
                     </div>
@@ -1059,7 +1049,7 @@
 
   
 
-    <!-----------------------------Post modal ends here----------------------------------------------------------->
+    <!-----------------------------create post ends here----------------------------------------------------------->
 <!---------------------------------------------------------------------------------------------------->
 <!---------------------------------------------------------------------------------------------------->
 

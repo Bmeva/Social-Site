@@ -5,6 +5,8 @@ from .models import Profile, User
 from django.http import HttpResponseRedirect
 
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from Core.models import Post
 # Create your views here.
 
 
@@ -122,4 +124,30 @@ def mylogout(request):
     return redirect('Register')
 
 
+@login_required(login_url='Register')
+def Myprofile(request):
+    profile = request.user.profile #get the profile of the logged in user
+    posts = Post.objects.filter(active = True, user = request.user).order_by('-id') #getting the post of only logged in user
+    
+    context  = {
 
+        'profile': profile,
+        'posts': posts,
+
+    }
+    return render(request, 'Authentication/Myprofile.html', context )
+
+
+
+@login_required(login_url='Register')
+def MyFriendprofile(request, username):
+    profile = Profile.objects.get(user__username=username)#__becouse its a foreign key and we want to access the username in the User model
+    posts = Post.objects.filter(active = True, user = profile.user).order_by('-id') 
+    
+    context  = {
+
+        'profile': profile,
+        'posts': posts,
+
+    }
+    return render(request, 'Authentication/MyFriendprofile.html', context )

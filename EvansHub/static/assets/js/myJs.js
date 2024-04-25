@@ -12,7 +12,7 @@
 
 
 
-$(document).ready(function() {
+$(document).ready(function() { // this is for the image preview when you try to upload an image
     var loadFile = function(event) {
         var output2 = document.getElementById("preview_post_thumbnail");
         output2.src = URL.createObjectURL(event.target.files[0]);
@@ -22,8 +22,6 @@ $(document).ready(function() {
     };
 
     // Attach loadFile function to the change event of the file input
-    $('#image_thumb').on('change', loadFile);
-
     $('#image_thumb').on('change', loadFile);
 
     $('#post-form').submit(function(e) {
@@ -52,12 +50,15 @@ $(document).ready(function() {
                 // Handle successful response (e.g., display a success message)
                 alert('Post created successfully!');
                 UIkit.modal('#create-post-modal').hide();
-                location.reload();
+
+                       
+
+               location.reload();
                 
             },
             error: function(xhr, status, error) {
                 // Handle error response (e.g., display an error message)
-                alert('Error creating post: ' + error);
+               alert('Error creating post: ' + error);
             }
         });
     });
@@ -98,8 +99,10 @@ $(document).on("click", "#like-btn", function(){ //like-btn is the id of the lik
 
 // Comment on post
 $(document).on("click", "#comment-btn", function(){ //we add #on comment-btn bcos its an id attributeComment on Post but for class attribute we add .
-    let id = $(this).attr("data-comment-btn")
+    let id = $(this).attr("data-comment-btn") //the click button to post comment
     let comment = $("#comment-input"+id).val() //val is what ever gets typed inside the textbox. so #comment-input"+id).val gets the object called comment-input and also gets its id which is the post id  
+
+    let commentInput = $("#comment-input" + id); // this is the comment input box
 
     console.log(id);
     console.log(comment);
@@ -111,13 +114,141 @@ $(document).on("click", "#comment-btn", function(){ //we add #on comment-btn bco
             "id":id,
             "comment":comment,
         },
-        success: function(res){
+        success: function(response){
+            console.log(response);
+            commentInput.val('');
+            
+     
+           //# for id and . for class
+            location.reload();
+
+        }
+        
+    })
+    
+})
+$(document).on("click", "#like-comment-btn", function(){
+    let id = $(this).attr("data-like-comment")
+    console.log(id);
+
+    $.ajax({
+        url: "/like_comment/",
+        dataType: "json",
+        data:{
+            "id":id
+        },
+        success: function(response){
+            console.log(response.data.bool);
+            console.log(response.data.likes);
+
+            if (response.data.bool === true) {
+
+                $("#comment-likes-count"+id).text(response.data.likes)
+                $(".like-comment"+id).css("color", "red")
+
+            }else {
+                console.log("Unliked");
+                console.log(response.data.likes);
+                $("#comment-likes-count"+id).text(response.data.likes)
+                $('#comment-icon'+id).removeClass(' text-red-600 ');
+                console.log($('.comment-icon'+id));
+                $("#comment-likes-count"+id).removeClass(' text-red-600 ');
+                $(".like-comment"+id).css("color", "gray")
+
+
+            }
         }
     })
 })
 
+
+// Reply Comment
+$(document).on("click", "#reply-comment-btn", function(){
+    let id = $(this).attr("data-reply-comment-btn")
+    let reply = $("#reply-input"+id).val()
+
+    console.log(id);
+    console.log(reply);
+
+    $.ajax({
+        url: "/reply_comment/",
+        dataType: "json",
+        data:{
+            "id":id,
+            "reply":reply,
+        },
+        success: function(res){
+            console.log(res)
+            $("#reply-input"+id).val("")
+            $("#reply-details-open" + id).removeAttr("open");
+            let newReply = '<div class="flex mr-12 mb-2 mt-2" style="margin-right: 20px;">\
+            \
+                <div class="w-10 h-10 rounded-full relative flex-shrink-0">\
+                    <img src="'+res.data.profile_image+'" style="width: 40px; height: 40px;" alt="" class="absolute h-full rounded-full w-full ">\
+                </div>\
+                <div>\
+                    <div class="text-gray-700 py-2 px-3 rounded-md bg-gray-100 relative lg:ml-5 ml-2 lg:mr-12 dark:bg-gray-800 dark:text-gray-100">\
+                        <p class="leading-6">'+ res.data.reply +'</p>\
+                        <button class="ml-auto text-xs ml-3 mr-3" id="delete-reply-comment" data-delete-reply-comment="'+res.data.reply_id+'"> <i class="fas fa-trash text-red-500"></i> </button>\
+                        <div class="absolute w-3 h-3 top-3 -left-1 bg-gray-100 transform rotate-45 dark:bg-gray-800"></div>\
+                    </div>\
+                    <span><small>'+ res.data.date +'ago</small> </span>\
+                </div>\
+            </div>\
+            '
+            $(".reply-div"+id).prepend(newReply);
+           
+                               
+            
+            console.log(res.data.bool);
+        }
+    })
+})
+//delete comment
+$(document).on("click", "#delete-comment", function(){
+    let id = $(this).attr("data-delete-comment")
+
+    $.ajax({
+        url: "/deleteComment/",
+        dataType: "json",
+        data:{
+            "id":id,
+           
+        },
+        success: function(response){
+            console.log("Comment", id, "Deleted");
+            $("#comment-div"+id).addClass("d-none")
+
+        }
+        })
+    })
+
+//delete comment reply
+    $(document).on("click", "#delete-reply-comment", function(){
+        let id = $(this).attr("data-delete-reply-comment")
+    
+        $.ajax({
+            url: "/deleteCommentReply/",
+            dataType: "json",
+            data:{
+                "id":id,
+               
+            },
+            success: function(response){
+                console.log("Comment", id, "Deleted");
+                $("#comment-delete-div"+id).addClass("d-none");
+    
+            }
+            })
+        })
         
+    
+
 
 });
+
+        
+
+
 
 

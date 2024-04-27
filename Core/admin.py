@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 from django.contrib import admin
-from Core.models import Post, Friend, FriendRequest, Notification, Comment, Gallery, ReplyComment, Group, GroupPost, Page, PagePost, ChatMessage, GroupChat, GroupChatMessage
+from Core.models import Post, Friend, ChatMessage, FriendRequest, Notification, Comment, Gallery, ReplyComment, Group, GroupPost, Page, PagePost, ChatMessage, GroupChat, GroupChatMessage
 
 
 class FriendRequestAdmin(admin.ModelAdmin):
@@ -59,6 +59,7 @@ class CommentAdmin(admin.ModelAdmin):
 
 
 class ChatMessageAdmin(admin.ModelAdmin):
+    list_editable = ['message']
     list_display = ['user', 'sender', 'reciever' ,'message','date', 'is_read']
     
 
@@ -70,6 +71,7 @@ class GroupChatAdmin(admin.ModelAdmin):
 class GroupChatMessageAdmin(admin.ModelAdmin):
     list_display = ['groupchat', 'sender', 'message' ,'is_read','date']
 
+  
     
 
 admin.site.register(Notification, NotificationAdmin)
@@ -83,5 +85,8 @@ admin.site.register(Page, PageAdmin)
 admin.site.register(ChatMessage, ChatMessageAdmin)
 admin.site.register(GroupChatMessage, GroupChatMessageAdmin)
 admin.site.register(GroupChat, GroupChatAdmin)
+
+
+
 
 

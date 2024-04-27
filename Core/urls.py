@@ -11,7 +11,7 @@ urlpatterns = [
      #Ajax url 
     path('create_post/', views.create_post, name='create_post'),
 
-    path('lke_post/', views.lke_post, name='lke_post'),
+    path('like_post/', views.like_post, name='like_post'),
 
     path('comment_on_post/', views.comment_on_post, name='comment_on_post'),
 
@@ -26,20 +26,12 @@ urlpatterns = [
     
     path('addFriend/', views.addFriend, name='addFriend'),
 
-    
+    path('accept_friend_request/', views.accept_friend_request, name='accept_friend_request'),
 
-    
-
-
-   
-
-    
+    path('reject_friend_request/', views.reject_friend_request, name='reject_friend_request'),
 
 
-
-    
-
-
+    path('unfriend/', views.unfriend, name='unfriend'),
 
 
     

@@ -7,8 +7,30 @@ from django.utils.timesince import timesince
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from .models import Comment, ReplyComment
-from Core.models import User, Friend, FriendRequest
-# Create your views here.
+from Core.models import User, Friend, FriendRequest, Notification, ChatMessage
+from django.db.models import OuterRef, Subquery, Q
+
+# Notification keys. all these fields matches with the NOTIFICATION_TYPE tupple in the model
+noti_new_like = "New Like"
+noti_new_follower = "New Follower"
+noti_friend_request = "Friend Request"
+noti_new_comment = "New Comment"
+noti_comment_liked = "Comment Liked"
+noti_comment_replied = "Comment Replied"
+noti_friend_request_accepted = "Friend Request Accepted"
+
+
+def send_notification(user, sender, post, comment, notification_type):
+    notification = Notification.objects.create(
+        user=user, 
+        sender=sender, 
+        post=post, 
+        comment=comment, 
+        notification_type=notification_type
+    )
+    return notification
+
+
 def index(request):
     if not request.user.is_authenticated:
         return redirect('Register')# i can use this querry instead of using login required decorator. Register is the url that has the Loginpage as well
@@ -72,7 +94,7 @@ def create_post(request):
         
 
 
-def lke_post(request):
+def like_post(request):
     
     id = request.GET['id'] #get the id of the post but we got it through the js code
     post = Post.objects.get(id = id)
@@ -85,6 +107,11 @@ def lke_post(request):
     else:
         post.likes.add(user)
         thebool = True
+
+        if post.user != request.user:
+            send_notification(post.user, user, post, None, noti_new_like)
+        
+        
     
     likes = post.likes.all().count()
 
@@ -108,6 +135,9 @@ def comment_on_post(request):
         comment = comment,
         user = user
     )
+    if new_comment.user != post.user:
+        send_notification(post.user, user, post, new_comment, noti_new_comment)
+        
     data = {
         'bool': True,
         'comment': new_comment.comment,
@@ -133,7 +163,10 @@ def like_comment(request):
         bool = False
     else:
         comment.likes.add(user)
-        bool = True 
+        bool = True
+
+        if comment.user != user:
+            send_notification(comment.user, user, comment.post, comment, noti_comment_liked) 
 
        
     data = {
@@ -158,7 +191,9 @@ def reply_comment(request):
         reply=reply,
         user=user
     )
-
+       
+    if comment.user != user:
+        send_notification(comment.user, user, comment.post, comment, noti_comment_replied) 
     
     data = {
         "bool":True,
@@ -199,7 +234,7 @@ def addFriend(request):
     bool = False
 
     if sender.id == int(receiver_id):
-        return JsonResponse({'Error': 'You cabt send friend request to yourself'})
+        return JsonResponse({'Error': 'You cant send friend request to yourself'})
     receiver = User.objects.get(id = receiver_id)
 
     try:
@@ -212,4 +247,95 @@ def addFriend(request):
         friend_request = FriendRequest(sender=sender, receiver=receiver)
         friend_request.save()
         bool = True
+            
+     
+        send_notification(receiver, sender, None, None, noti_friend_request) #None and None becouse there is no post and no comment 
         return JsonResponse({'Success': 'Sent', 'bool': bool})
+    
+
+@csrf_exempt
+def accept_friend_request(request):
+    id = request.GET['id'] 
+    sender = User.objects.get(id=id)
+
+    receiver = request.user
+        
+    friend_request = FriendRequest.objects.filter(receiver=receiver, sender=sender).first()
+
+    receiver.profile.friends.add(sender)
+    sender.profile.friends.add(receiver)
+
+    friend_request.delete()
+
+    send_notification(sender, receiver, None, None, noti_friend_request_accepted)
+    data = {
+        "message":"Accepted",
+        "bool":True,
+    }
+    
+    return JsonResponse({'data': data})
+
+
+
+
+@csrf_exempt
+def reject_friend_request(request):
+    id = request.GET['id'] 
+
+    receiver = request.user
+    sender = User.objects.get(id=id)
+    
+    friend_request = FriendRequest.objects.filter(receiver=receiver, sender=sender).first()
+    friend_request.delete()
+
+    data = {
+        "message":"Rejected",
+        "bool":True,
+    }
+    return JsonResponse({'data': data})
+
+
+
+
+@csrf_exempt
+def unfriend(request):
+    sender = request.user
+    friend_id = request.GET['id'] 
+    bool = False
+
+    if sender.id == int(friend_id):
+        return JsonResponse({'error': 'You cannot unfriend yourself, wait a minute how did you even send yourself a friend request?.'})
+    
+    my_friend = User.objects.get(id=friend_id)
+    
+    if my_friend in sender.profile.friends.all():
+        sender.profile.friends.remove(my_friend)
+        my_friend.profile.friends.remove(sender)
+        bool = True
+        return JsonResponse({'success': 'Unfriend Successfull',  'bool':bool})
+
+
+@login_required
+def inbox(request):
+    user_id = request.user
+
+    chat_message = ChatMessage.objects.filter(
+        id__in =  Subquery(
+            User.objects.filter(
+                Q(sender__reciever=user_id) |
+                Q(reciever__sender=user_id)
+            ).distinct().annotate(
+                last_msg=Subquery(
+                    ChatMessage.objects.filter(
+                        Q(sender=OuterRef('id'),reciever=user_id) |
+                        Q(reciever=OuterRef('id'),sender=user_id)
+                    ).order_by('-id')[:1].values_list('id',flat=True) 
+                )
+            ).values_list('last_msg', flat=True).order_by("-id")
+        )
+    ).order_by("-id")
+    
+    context = {
+        'chat_message': chat_message,
+    }
+    return render(request, 'chat/inbox.html', context)

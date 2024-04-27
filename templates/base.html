@@ -49,7 +49,7 @@
                         </span>
 
                         <div id="logo">
-                            <a href="feed.html"> 
+                            <a href="{% url 'index' %}"> 
                                 <img src="{% static 'assets/images/logo.png' %}" alt="">
                                 <img src="{% static 'assets/images/logo-mobile.png' %}" class="logo_mobile" alt="">
                             </a>
@@ -76,24 +76,7 @@
                                         <div class="list-name">  Coffee  Addicts </div>
                                     </a>
                                 </li>
-                                <li>
-                                    <a href="#">  
-                                        <img src="{% static 'assets/images/avatars/avatar-3.jpg' %}" alt="" class="list-avatar">
-                                        <div class="list-name"> Mountain Riders </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">  
-                                        <img src="{% static 'assets/images/avatars/avatar-4.jpg' %}" alt="" class="list-avatar">
-                                        <div class="list-name"> Property Rent And Sale  </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">  
-                                        <img src="{% static 'assets/images/avatars/avatar-5.jpg' %}" alt="" class="list-avatar">
-                                        <div class="list-name">  Erica Jones </div>
-                                    </a>
-                                </li>
+                               
                             </ul>
 
                         </div>
@@ -140,71 +123,7 @@
                                             <button class="type"> Remove</button>
                                         </div>
                                     </li>
-                                    <li>
-                                        <div class="cart_avatar">
-                                            <img src="{% static 'assets/images/product/15.jpg' %}" alt="">
-                                        </div>
-                                        <div class="cart_text">
-                                            <div class=" font-semibold leading-4 mb-1.5 text-base line-clamp-1"> Herbal Shampoo </div>
-                                            <p class="text-sm">Type Herbel </p>
-                                        </div>
-                                        <div class="cart_price">
-                                            <span> $12.99 </span>
-                                            <button class="type"> Remove</button>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="cart_avatar">
-                                            <img src="{% static 'assets/images/product/14.jpg' %}" alt="">
-                                        </div>
-                                        <div class="cart_text">
-                                            <div class=" font-semibold leading-4 mb-1.5 text-base line-clamp-1"> Wood Chair </div>
-                                            <p class="text-sm">Type Furniture </p>
-                                        </div>
-                                        <div class="cart_price">
-                                            <span> $19.99 </span>
-                                            <button class="type"> Remove</button>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="cart_avatar">
-                                            <img src="{% static 'assets/images/product/9.jpg' %}" alt="">
-                                        </div>
-                                        <div class="cart_text">
-                                            <div class=" font-semibold leading-4 mb-1.5 text-base line-clamp-1"> Strawberries FreshRipe </div>
-                                            <p class="text-sm">Type Fruit </p>
-                                        </div>
-                                        <div class="cart_price">
-                                            <span> $12.99 </span>
-                                            <button class="type"> Remove</button>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="cart_avatar">
-                                            <img src="{% static 'assets/images/product/2.jpg' %}" alt="">
-                                        </div>
-                                        <div class="cart_text">
-                                            <div class=" font-semibold leading-4 mb-1.5 text-base line-clamp-1"> Wireless headphones </div>
-                                            <p class="text-sm">Type Accessories </p>
-                                        </div>
-                                        <div class="cart_price">
-                                            <span> $14.99 </span>
-                                            <button class="type"> Remove</button>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="cart_avatar">
-                                            <img src="{% static 'assets/images/product/13.jpg' %}" alt="">
-                                        </div>
-                                        <div class="cart_text">
-                                            <div class=" font-semibold leading-4 mb-1.5 text-base line-clamp-1"> Parfum Spray</div>
-                                            <p class="text-sm">Type Parfums </p>
-                                        </div>
-                                        <div class="cart_price">
-                                            <span> $16.99 </span>
-                                            <button class="type"> Remove</button>
-                                        </div>
-                                    </li>
+                                    
                                 </ul>
 
                                 <div class="cart_footer">
@@ -213,9 +132,62 @@
                                 </div>
                             </div>
 
+                             <!--FRIEND REQUEST NOTIFICATION-->
+                             <a href="#" class="is_icon" uk-tooltip="title: Friend Request">
+                                <i class="fas fa-user text-blue-600"></i>
+                                <span>{{friend_request.count}}</span> <!--friend_request is context processor-->
+                            </a>
+                            <div uk-drop="mode: click" class="header_dropdown">
+                                <div class="dropdown_scrollbar" data-simplebar>
+                                    <div class="drop_headline">
+                                        <h4>Friend Request </h4>
+                                        <div class="btn_action">
+                                            <a href="#" data-tippy-placement="left" title="Notifications">
+                                                <ion-icon name="settings-outline"></ion-icon>
+                                            </a>
+                                            <a href="#" data-tippy-placement="left" title="Mark as read all">
+                                                <ion-icon name="checkbox-outline"></ion-icon>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <ul>
+                                        {% for f in friend_request %}
+                                            <li class="mt-3 mb-4 shadow p-3">
+                                                <a href="#">
+                                                    <div class="drop_avatar">
+                                                        <img src="{{f.sender.profile.image.url}}" alt="">
+                                                    </div>
+                                                    <span class="drop_icon bg-gradient-primary">
+                                                        <i class="icon-feather-thumbs-up"></i>
+                                                    </span>
+                                                    <div class="drop_text">
+                                                        <p> <strong>{{f.sender.profile.full_name}}</strong> sent you a friend request. </p>
+                                                        <time> {{f.date|timesince}} ago </time>
+                                                    </div>
+                                                    <div class="d-flex" id="friend-request-button-div">
+                                                        <a id="accept-friend-request"  data-request-id="{{f.sender.id}}" class="accept-friend-request-hide{{f.sender.id}} flex items-center justify-center h-10 px-5 rounded-md bg-blue-600 text-white space-x-1.5 hover:text-white" style="margin-left: 5px;"> 
+                                                            <span style="cursor: pointer;" class="text-white accept-friend-request{{f.sender.id}}" id="friend-text"><i class="fas fa-user-plus"></i> Accept </span>
+                                                        </a>
+                                                        <a id="reject-friend-request"  data-request-id="{{f.sender.id}}" class="reject-friend-request-hide{{f.sender.id}} flex items-center justify-center h-10 px-5 rounded-md bg-red-600 text-white space-x-1.5 hover:text-white" style="margin-left: 5px;"> 
+                                                            <span style="cursor: pointer;" class="text-white reject-friend-request{{f.sender.id}}" id="friend-text"><i class="fas fa-user-minus"></i> Reject </span>
+                                                        </a>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        {% empty %}
+                                            <li>No Friend Request </li>
+                                        {% endfor %}                                      
+                                           
+                                    </ul>
+                                </div>
+                            </div>
+
+
+
+                            <!--notifications-->
                             <a href="#" class="is_icon" uk-tooltip="title: Notifications">
                                 <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path></svg>
-                                <span>3</span>
+                                <span>{{notification.count}}</span>
                             </a>
                             <div uk-drop="mode: click" class="header_dropdown">
                                 <div class="dropdown_scrollbar" data-simplebar>
@@ -231,159 +203,52 @@
                                         </div>
                                     </div>
                                     <ul>
+                                        {% for n in notification %}
                                         <li>
                                             <a href="#">
                                                 <div class="drop_avatar">
-                                                    <img src="{% static 'assets/images/avatars/avatar-1.jpg' %}" alt="">
+                                                    <img src="{{n.sender.profile.image.url}}" alt="">
                                                 </div>
                                                 <span class="drop_icon bg-gradient-primary">
-                                                     <i class="icon-feather-thumbs-up"></i>
+                                                    {% if n.notification_type == "New Like" %}<i class="icon-feather-thumbs-up"></i> {% endif %}
+                                                    {% if n.notification_type == "New Comment" %}<i class="icon-feather-message-square"></i>{% endif %}
+                                                    {% if n.notification_type == "Comment Liked" %}<i class="icon-feather-thumbs-up"></i>{% endif %}
+                                                    {% if n.notification_type == "Comment Replied" %}<i class="icon-feather-message-square"></i>{% endif %}
+                                                    {% if n.notification_type == "New Follower" %}<i class="icon-feather-user-plus"></i>{% endif %}
+                                                    {% if n.notification_type == "Friend Request Accepted" %}<i class="icon-feather-check-circle"></i>{% endif %}
+                                                    {% if n.notification_type == "Friend Request" %}<i class="icon-feather-user-plus"></i>{% endif %}
+                                                        
+                                                    
                                                  </span>
                                                 <div class="drop_text">
                                                     <p>
-                                                        <strong>Adrian Mohani</strong> Like Your Comment On Video
-                                                        <span class="text-link">Learn Prototype Faster </span>
+                                                        <strong>{{n.sender.profile.full_name}}</strong> 
+                                                        {% if n.notification_type == "New Like" %} Liked your post {% endif %}
+
+                                                        {% if n.notification_type == "New Comment" %} Commented on your post {% endif %}
+
+                                                        {% if n.notification_type == "Comment Liked" %} Liked your comment on {% endif %}
+
+                                                        {% if n.notification_type == "Comment Replied" %} Replied your comment on {% endif %}
+
+                                                        {% if n.notification_type == "New Follower" %} Just Followed You {% endif %}
+
+                                                        {% if n.notification_type == "Friend Request Accepted" %} Accepted Your Friend Request {% endif %}
+
+                                                        {% if n.notification_type == "Friend Request" %} Sent you a friend Request  {% endif %}
+                                                        
+                                                        {% if n.post %}
+                                                        <span class="text-link">{{ n.post.title }} </span>
+                                                        {% endif %}
+                                                        
+                                                        
+                                                        <span class="text-link">{{ n.date|timesince }} ago</span>
                                                     </p>
-                                                    <time> 2 hours ago </time>
                                                 </div>
                                             </a>
                                         </li>
-                                        <li class="not-read">
-                                            <a href="#">
-                                                <div class="drop_avatar status-online"> <img src="{% static 'assets/images/avatars/avatar-2.jpg' %}" alt="">
-                                                </div>
-                                                <div class="drop_text">
-                                                    <p>
-                                                        <strong>Stella Johnson</strong> Replay Your Comments in
-                                                        <span class="text-link">Adobe XD Tutorial</span>
-                                                    </p>
-                                                    <time> 9 hours ago </time>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <div class="drop_avatar"> <img src="{% static 'assets/images/avatars/avatar-3.jpg' %}" alt="">
-                                                </div>
-                                                <span class="drop_icon bg-gradient-primary">
-                                                    <i class="icon-feather-thumbs-up"></i>
-                                                </span>
-                                                <div class="drop_text">
-                                                    <p>
-                                                        <strong>Alex Dolgove</strong> Added New Review In Video
-                                                        <span class="text-link">Full Stack PHP Developer</span>
-                                                    </p>
-                                                    <time> 12 hours ago </time>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <div class="drop_avatar"> <img src="{% static 'assets/images/avatars/avatar-1.jpg' %}" alt="">
-                                                </div>
-                                                <div class="drop_text">
-                                                    <p>
-                                                        <strong>Jonathan Madano</strong> Shared Your Discussion On Video
-                                                        <span class="text-link">Css Flex Box </span>
-                                                    </p>
-                                                    <time> Yesterday </time>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <div class="drop_avatar"> <img src="{% static 'assets/images/avatars/avatar-1.jpg' %}" alt="">
-                                                </div>
-                                                <span class="drop_icon bg-gradient-primary">
-                                                    <i class="icon-feather-thumbs-up"></i>
-                                                </span>
-                                                <div class="drop_text">
-                                                    <p>
-                                                        <strong>Adrian Mohani</strong> Like Your Comment On Course
-                                                        <span class="text-link">Javascript Introduction </span>
-                                                    </p>
-                                                    <time> 2 hours ago </time>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <div class="drop_avatar status-online"> <img src="{% static 'assets/images/avatars/avatar-2.jpg' %}" alt="">
-                                                </div>
-                                                <div class="drop_text">
-                                                    <p>
-                                                        <strong>Stella Johnson</strong> Replay Your Comments in
-                                                        <span class="text-link">Programming for Games</span>
-                                                    </p>
-                                                    <time> 9 hours ago </time>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <div class="drop_avatar"> <img src="{% static 'assets/images/avatars/avatar-2.jpg' %}" alt="">
-                                                </div>
-                                                <div class="drop_text">
-                                                    <p>
-                                                        <strong>Stella Johnson</strong> Replay Your Comments in
-                                                        <span class="text-link">Programming for Games</span>
-                                                    </p>
-                                                    <time> 9 hours ago </time>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <div class="drop_avatar"> <img src="{% static 'assets/images/avatars/avatar-3.jpg' %}" alt="">
-                                                </div>
-                                                <div class="drop_text">
-                                                    <p>
-                                                        <strong>Alex Dolgove</strong> Added New Review In Course
-                                                        <span class="text-link">Full Stack PHP Developer</span>
-                                                    </p>
-                                                    <time> 12 hours ago </time>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <div class="drop_avatar"> <img src="{% static 'assets/images/avatars/avatar-1.jpg' %}" alt="">
-                                                </div>
-                                                <div class="drop_text">
-                                                    <p>
-                                                        <strong>Jonathan Madano</strong> Shared Your Discussion On Course
-                                                        <span class="text-link">Css Flex Box </span>
-                                                    </p>
-                                                    <time> Yesterday </time>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <div class="drop_avatar"> <img src="{% static 'assets/images/avatars/avatar-1.jpg' %}" alt="">
-                                                </div>
-                                                <div class="drop_text">
-                                                    <p>
-                                                        <strong>Adrian Mohani</strong> Like Your Comment On Course
-                                                        <span class="text-link">Javascript Introduction </span>
-                                                    </p>
-                                                    <time> 2 hours ago </time>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <div class="drop_avatar"> <img src="{% static 'assets/images/avatars/avatar-2.jpg' %}" alt="">
-                                                </div>
-                                                <div class="drop_text">
-                                                    <p>
-                                                        <strong>Stella Johnson</strong> Replay Your Comments in
-                                                        <span class="text-link">Programming for Games</span>
-                                                    </p>
-                                                    <time> 9 hours ago </time>
-                                                </div>
-                                            </a>
-                                        </li>
+                                        {% endfor %}
+                                        
                                     </ul>
                                 </div>
                             </div>
@@ -423,76 +288,7 @@
                                                 </div>
                                             </a>
                                         </li>
-                                        <li>
-                                            <a href="#">
-                                                <div class="drop_avatar"> <img src="{% static 'assets/images/avatars/avatar-1.jpg' %}" alt="">
-                                                </div>
-                                                <div class="drop_text">
-                                                    <strong> Adrian Mohani </strong> <time> 6:43 PM</time>
-                                                    <p> Thanks for The Answer sit amet... </p>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <div class="drop_avatar"> <img src="{% static 'assets/images/avatars/avatar-6.jpg' %}" alt="">
-                                                </div>
-                                                <div class="drop_text">
-                                                    <strong>Alia Dolgove </strong> <time> Wed </time>
-                                                    <p> Alia just joined Messenger! </p>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <div class="drop_avatar"> <img src="{% static 'assets/images/avatars/avatar-5.jpg' %}" alt="">
-                                                </div>
-                                                <div class="drop_text">
-                                                    <strong> Jonathan Madano </strong> <time> Sun</time>
-                                                    <p> Replay Your Comments insit amet consectetur </p>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li class="un-read">
-                                            <a href="#">
-                                                <div class="drop_avatar"> <img src="{% static 'assets/images/avatars/avatar-2.jpg' %}" alt="">
-                                                </div>
-                                                <div class="drop_text">
-                                                    <strong> Stella Johnson </strong> <time>12:43 PM</time>
-                                                    <p> Alex will explain you how ... </p>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <div class="drop_avatar"> <img src="{% static 'assets/images/avatars/avatar-1.jpg' %}" alt="">
-                                                </div>
-                                                <div class="drop_text">
-                                                    <strong> Adrian Mohani </strong> <time> 6:43 PM</time>
-                                                    <p> Thanks for The Answer sit amet... </p>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <div class="drop_avatar"> <img src="{% static 'assets/images/avatars/avatar-3.jpg' %}" alt="">
-                                                </div>
-                                                <div class="drop_text">
-                                                    <strong>Alia Dolgove </strong> <time> Wed </time>
-                                                    <p> Alia just joined Messenger! </p>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <div class="drop_avatar"> <img src="{% static 'assets/images/avatars/avatar-4.jpg' %}" alt="">
-                                                </div>
-                                                <div class="drop_text">
-                                                    <strong> Jonathan Madano </strong> <time> Sun</time>
-                                                    <p> Replay Your Comments insit amet consectetur </p>
-                                                </div>
-                                            </a>
-                                        </li>
+                                        
                                     </ul>
                                 </div>
                                 <a href="#" class="see-all"> See all in Messages</a>

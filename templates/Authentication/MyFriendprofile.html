@@ -253,7 +253,7 @@
                             <ul uk-switcher="connect: #timeline-tab; animation: uk-animation-fade">
                                 <li><a href="#">Timeline</a></li>
                                 <li><a href="#">Friend <span>{{profile.friends.all.count}}</span> </a></li>
-                                <li><a href="#">Photoes </a></li>
+                                <li><a href="#">Photos </a></li>
                                 <li><a href="#">Pages</a></li>
                                 <li><a href="#">Groups</a></li>
                                 <li><a href="#">Videos</a></li>
@@ -264,13 +264,35 @@
                         <div class="flex items-center space-x-1.5 flex-shrink-0 pr-4 mb-2 justify-center order-1 relative">
                           
                             {% if request.user == profile.user %}
+                                
                             <!-- add story -->
-                            <a href="#" class="flex items-center justify-center h-10 px-5 rounded-md bg-blue-600 text-white space-x-1.5 hover:text-white" uk-toggle="target: #create-post-modal"> 
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path>
-                                </svg>
+                            <a href="#" class="flex items-center justify-center h-10 px-5 rounded-md bg-blue-600 text-white space-x-1.5 hover:text-white"> 
+                                
                                 <span> Add Your Story </span>
                             </a>
+                            {% endif %}
+
+                            {% if profile.user in request.user.profile.friends.all %}
+                            <!-- Friend request button -->
+                            <a id="unfriend"  data-friend-id="{{profile.user.id}}" class="flex items-center justify-center h-10 px-5 rounded-md bg-red-600 text-white space-x-1.5 hover:text-white unfriend{{profile.user.id}}" > 
+                                <span style="cursor: pointer;" class="text-white" id="unfriend-text"><i class="fas fa-user-minus"></i> Unfriend </span>
+                            </a>
+                            {% else %}
+                                 {% if bool == True %}
+                                 <a id="add-friend"  data-friend-id="{{profile.user.id}}" class="flex items-center justify-center h-10 px-5 rounded-md bg-red-600 text-white space-x-1.5 hover:text-white add-friend{{profile.user.id}}" > 
+                                    <span style="cursor: pointer;" class="text-white" id="friend-text"><i class="fas fa-user-minus"></i> Cancel Request </span>
+                                </a>
+                                
+                                {% else %}
+                           
+
+                                <a id="add-friend"  data-friend-id="{{profile.user.id}}" class="flex items-center justify-center h-10 px-5 rounded-md bg-blue-600 text-white space-x-1.5 hover:text-white add-friend{{profile.user.id}}" > 
+                                <span style="cursor: pointer;" class="text-white" id="friend-text"><i class="fas fa-user-plus"></i> Add Friend </span>
+                                </a>
+                                        
+
+                                {% endif %}
+
                             {% endif %}
 
                             <!-- search icon -->
@@ -795,11 +817,11 @@
                                     <img src="{{f.profile.image.url}}" class="h-36 object-cover rounded-md shadow-sm w-full">
                                 </a>
                                 <div class="pt-3 px-1">
-                                    <a href="timeline.html" class="text-base font-semibold mb-0.5"> {{f.profile.full_name}}</a>
+                                    <a href="{% url 'MyFriendprofile' f.profile.user.username %}" class="text-base font-semibold mb-0.5"> {{f.profile.full_name}}</a>
                                     <p class="font-medium text-sm">{{f.profile.friends.all.count}} Friend(s) </p>
-                                    <button class="bg-blue-100 w-full flex font-semibold h-8 items-center justify-center mt-3 px-3 rounded-md text-blue-600 text-sm mb-1">
-                                        Add Friend
-                                    </button>
+                                    <a href="{% url 'MyFriendprofile' f.profile.user.username %}" class="bg-blue-100 w-full flex font-semibold h-8 items-center justify-center mt-3 px-3 rounded-md text-blue-600 text-sm mb-1">
+                                        View Profile
+                                    </a>
                                 </div>
                             </div>
                            {% endfor %}

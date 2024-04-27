@@ -70,7 +70,7 @@ $(document).on("click", "#like-btn", function(){ //like-btn is the id of the lik
     console.log(btn_val);
 
     $.ajax({
-        url: "/lke_post/",
+        url: "/like_post/",
         dataType: "json",
         data:{
             "id":btn_val  //the id is the id in the django views so we are passing the id of btn_val to the id on like_post views. btn_val contains the id
@@ -119,7 +119,7 @@ $(document).on("click", "#comment-btn", function(){ //we add #on comment-btn bco
             commentInput.val('');
             
      
-           //# for id and . for class
+           
             location.reload();
 
         }
@@ -241,13 +241,98 @@ $(document).on("click", "#delete-comment", function(){
             }
             })
         })
-        
-    
+
+        //Add friend
+        $(document).on("click", "#add-friend", function(){
+            let id = $(this).attr("data-friend-id")
+            console.log(id);
+
+            $.ajax({
+                url: "/addFriend/",
+                dataType: "json",
+                data:{
+                    "id":id
+                },
+                success: function(response){
+                    console.log("Bool ==",response.bool);
+                    if (response.bool == true) {
+                        $("#friend-text").html("<i class='fas fa-user-minus'></i> Cancel Request ")
+                        $(".add-friend"+id).addClass("bg-red-600")
+                        $(".add-friend"+id).removeClass("bg-blue-600")
+                    }
+                    if (response.bool == false) {
+                        $("#friend-text").html("<i class='fas fa-user-plus'></i> Add Friend ")
+                        $(".add-friend"+id).addClass("bg-blue-600")
+                        $(".add-friend"+id).removeClass("bg-red-600")
+                    }
+                }
+            })
+        })
+
+        // Accept Friend Request
+            $(document).on("click", "#accept-friend-request", function(){  // Accept Friend Request button is on base.html
+                let id = $(this).attr("data-request-id")
+                console.log(id);
+
+                $.ajax({
+                    url: "/accept_friend_request/",
+                    dataType: "json",
+                    data: {
+                        "id":id
+                    },
+                    success: function(response){
+                        console.log(response.data);
+                        $(".reject-friend-request-hide"+id).hide() //reject-friend-request-hide coming from base
+                        $(".accept-friend-request"+id).html("<i class='fas fa-check-circle'></i> Friend Request Accepted")
+                        $(".accept-friend-request"+id).addClass("text-white")
+                    }
+                })
+            })
+
+                // Reject Friend Request
+                $(document).on("click", "#reject-friend-request", function(){
+                    let id = $(this).attr("data-request-id")
+                    console.log(id);
+
+                    $.ajax({
+                        url: "/reject_friend_request/",  
+                        dataType: "json",
+                        data: {
+                            "id":id
+                        },
+                        success: function(response){
+                            console.log(response.data);
+                            $(".accept-friend-request-hide"+id).hide()
+                            $(".reject-friend-request"+id).html("<i class='fas fa-check-circle'></i> Friend Request Rejected")
+                            $(".reject-friend-request"+id).addClass("text-white")
+                        }
+                    })
+                })
+
+            // UnFriend User
+            $(document).on("click", "#unfriend", function(){ //this button is in Myfriendprofile.html
+                let id = $(this).attr("data-friend-id")
+                console.log(id);
+
+                $.ajax({
+                    url: "/unfriend/",
+                    dataType: "json",
+                    data: {
+                        "id":id
+                    },
+                    success: function(response){
+                        console.log(response);
+                        $("#unfriend-text").html("<i class='fas fa-check-circle'></i> Friend Removed ")
+                        $(".unfriend"+id).addClass("bg-blue-600")
+                        $(".unfriend"+id).removeClass("bg-red-600")
+                    }
+                })
+            })
 
 
-});
 
-        
+//# for id and . for class
+    });
 
 
 

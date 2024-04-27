@@ -30,6 +30,9 @@ urlpatterns = [
 
     path('Authentication/', include('Authentication.urls')),
 
+    path('Chat/', include('Chat.urls')),
+
+
     #path('store/', include('Mystore.urls')),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

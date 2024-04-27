@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from Core.models import Post
+from Core.models import Post, FriendRequest
 # Create your views here.
 
 
@@ -141,13 +141,37 @@ def Myprofile(request):
 
 @login_required(login_url='Register')
 def MyFriendprofile(request, username):
+    #if request.user.profile == profile:
+        #return redirect('Myprofile') This can also do the same. 
+    
+    if request.user.username == username: # IWANT TO ENSURE THE LOGGED IN USER DONT HAVE ACCESS TO THIS PAGE
+        return redirect('Myprofile')
+   
+    
+    
     profile = Profile.objects.get(user__username=username)#__becouse its a foreign key and we want to access the username in the User model
     posts = Post.objects.filter(active = True, user = profile.user).order_by('-id') 
-    
+    bool = False
+    bool_friend = False
+
+    sender = request.user
+    receiver = profile.user
+
+    try:
+        friend_request = FriendRequest.objects.get(sender=sender, receiver=receiver)
+        if friend_request:
+            bool = True
+        else:
+            bool  = False
+    except:
+        bool = False
+
     context  = {
 
         'profile': profile,
         'posts': posts,
+        'bool': bool,
+        'posts': posts, 
 
     }
     return render(request, 'Authentication/MyFriendprofile.html', context )

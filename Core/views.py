@@ -295,8 +295,23 @@ def reject_friend_request(request):
     return JsonResponse({'data': data})
 
 
+def block_user(request):
+    sender = request.user
+    id = request.GET['id'] 
+    bool = False
 
-
+    if sender.id == int(id):
+        return JsonResponse({'error': 'You cannot unfriend yourself, wait a minute how did you even send yourself a friend request?.'})
+    
+    my_friend = User.objects.get(id=id)
+    
+    if my_friend in sender.profile.friends.all():
+        sender.profile.friends.remove(my_friend)
+        my_friend.profile.friends.remove(sender)
+        bool = True
+        return JsonResponse({'success': 'Unfriend Successfull',  'bool':bool})
+    
+    
 @csrf_exempt
 def unfriend(request):
     sender = request.user

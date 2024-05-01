@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import UserRegisterForm
+from .forms import UserRegisterForm, ProfileUpdateForm, UserUpdateForm
 from django.contrib import messages
 from .models import Profile, User
 from django.http import HttpResponseRedirect
@@ -175,3 +175,26 @@ def MyFriendprofile(request, username):
 
     }
     return render(request, 'Authentication/MyFriendprofile.html', context )
+
+
+
+@login_required
+def profile_update(request):
+    if request.method == "POST":
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+
+        if p_form.is_valid() and u_form.is_valid():
+            p_form.save()
+            u_form.save()
+            messages.success(request, "Profile Updated Successfully.")
+            return redirect('userauths:profile-update')
+    else:
+        p_form = ProfileUpdateForm(instance=request.user.profile)
+        u_form = UserUpdateForm(instance=request.user)
+
+    context = {
+        'p_form': p_form,
+        'u_form': u_form,
+    }
+    return render(request, 'Authentication/profile-update.html', context)

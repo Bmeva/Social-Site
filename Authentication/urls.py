@@ -14,13 +14,16 @@ urlpatterns = [
 
     path('MyFriendprofile/<username>', views.MyFriendprofile, name='MyFriendprofile'),
 
-    
+
+    path('Myprofile', views.Myprofile, name='Myprofile'),
+
+    path('profile_update', views.profile_update, name='profile_update'),
 
 
 
     
 
-  
+    
     
 ]
 

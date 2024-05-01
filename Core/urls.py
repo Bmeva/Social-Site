@@ -33,6 +33,8 @@ urlpatterns = [
 
     path('unfriend/', views.unfriend, name='unfriend'),
 
+    path('block_user/', views.block_user, name='block_user'),
+
 
     
 ]

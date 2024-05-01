@@ -329,25 +329,6 @@ $(document).on("click", "#delete-comment", function(){
                 })
             })
 
-            $(document).on("click", "#block-user-btn", function(){
-                let id = $(this).attr("data-block-user")
-               
-                
-                $.ajax({
-                    url: "/block_user/",
-                    dataType: "json",
-                    data: {
-                        "id":id
-                    },
-                    success: function(response){
-                        console.log(response);
-                        location.reload();
-                       
-                       
-                    }
-                })
-            })
-
 
 
 //# for id and . for class

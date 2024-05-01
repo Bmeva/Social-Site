@@ -67,5 +67,28 @@ add myfriendprofile url to to all comments
     add javascript after a post has been added
 
 
+if you delete dbslq3 and run migrate again a fresh db would be created
+
     video compress
     https://clideo.com/project/207625891/result
+
+
+
+    SETTING UP DJANGO CHANNELS
+    1. pip install CHANNELS
+    2. add 'channels' to the installed apps in settings.py
+    3. add ASGI_APPLICATION = 'EvansHub.asgi.application' in your settings.py 
+    4. add 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
+
+to the settings.py 
+
+
+daphne EvansHub.asgi:application
+
+python manage.py collect static. after typing the web socket js code run collectstatic command 
+first before you run daphne 

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'taggit',
     'import_export',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -79,6 +80,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'EvansHub.wsgi.application'
+
+ASGI_APPLICATION = 'EvansHub.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 
 # Database
